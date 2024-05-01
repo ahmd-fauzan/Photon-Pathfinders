@@ -10,12 +10,16 @@ public class TowerView : ObjectView<ITowerModel>
     private UnityAction<Vector3> _addLineAction;
     private UnityAction<TowerMessage> _updateLineAction;
     private UnityAction<float> _updateWidthAction;
+    private UnityAction _touchReceiverAction;
 
-    public void Init(UnityAction<Vector3> addLine, UnityAction<TowerMessage> updateLine, UnityAction<float> updateWidthLine)
+    private bool canShoot = true;
+
+    public void Init(UnityAction<Vector3> addLine, UnityAction<TowerMessage> updateLine, UnityAction<float> updateWidthLine, UnityAction touchReceiver)
     {
         _addLineAction = addLine;
         _updateLineAction = updateLine;
         _updateWidthAction = updateWidthLine;
+        _touchReceiverAction = touchReceiver;
     }
 
     protected override void InitRenderModel(ITowerModel model)
@@ -29,15 +33,15 @@ public class TowerView : ObjectView<ITowerModel>
     }
 
     void Update(){
-        if (Input.GetMouseButtonUp(0)){
+        if (Input.GetMouseButtonUp(0) && canShoot){
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, layer);
 
             if (hit.collider != null)
             {
-                Debug.Log("Hit : " + hit.collider.name);
-
                 StartCoroutine(ShowLine(1));
                 StartCoroutine(DrawLineRenderer());
+
+                canShoot = false;
             }
         }
     }
@@ -61,8 +65,6 @@ public class TowerView : ObjectView<ITowerModel>
             smoothValue = Mathf.Lerp(0f, 0.15f, elapsedTime / duration);
 
             // Gunakan nilai smooth ini untuk melakukan apa pun yang diperlukan
-            Debug.Log("Smooth Show Value: " + smoothValue);
-
             _updateWidthAction?.Invoke(smoothValue);
 
             yield return null;
@@ -87,7 +89,7 @@ public class TowerView : ObjectView<ITowerModel>
                 
                 _addLineAction?.Invoke(hit.point);
 
-                Debug.Log("Level Finished");
+                _touchReceiverAction?.Invoke();
                 break;
             }
 
@@ -140,5 +142,7 @@ public class TowerView : ObjectView<ITowerModel>
 
             yield return null;
         }
+
+        canShoot = true;
     }
 }

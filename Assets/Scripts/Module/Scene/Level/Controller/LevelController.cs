@@ -33,20 +33,28 @@ public class LevelController : ObjectController<LevelController, LevelModel, ILe
 
     public void LevelSelect(int number)
     {
+        Debug.Log("Show Scene : " + number);
         SetLevel(number);
         bool IsUnlockResult = _levelStatus.IsUnlock(_model.Level);
 
         if (IsUnlockResult)
         {
             Debug.Log("Level " + _model.LevelNumber + " is unlock");
-            SceneLoader.Instance.LoadScene(Scenes.GamePlay);
+            SceneLoader.Instance.LoadScene("Level" + _model.LevelNumber);
         }
         else
         {
             Debug.Log("Level " + _model.LevelNumber + " is lock");
             Publish<LockMessage>(new LockMessage());
         }
+    }
 
+    public void NextLevel(LevelMessage message){
+        int currentLevel = _model.LevelNumber;
+
+        Debug.Log("Current Level : " + currentLevel);
+
+        LevelSelect(currentLevel + 1);
     }
 
     public void Onback()

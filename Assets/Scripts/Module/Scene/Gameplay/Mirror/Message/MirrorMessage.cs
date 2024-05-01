@@ -13,7 +13,6 @@ public struct MirrorMessage{
 
     public Vector3 GetNextRotate(){
         for(int i = 0; i < rotateValueList.Count; i++){
-            Debug.Log(rotateValueList[i] + " == " + mirrorTransform.rotation.eulerAngles);
             if(rotateValueList[i] == this.mirrorTransform.rotation.eulerAngles){
                 if(i == rotateValueList.Count-1){
                     return rotateValueList[0];

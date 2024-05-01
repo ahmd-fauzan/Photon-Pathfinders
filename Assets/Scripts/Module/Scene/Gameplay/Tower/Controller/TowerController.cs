@@ -3,6 +3,9 @@ using UnityEngine;
 using Agate.MVC.Base;
 
 public class TowerController : ObjectController<TowerController, TowerModel, ITowerModel, TowerView>{
+    private LevelStatusController _levelStatus;
+    private LevelController _level;
+
     public override IEnumerator Finalize()
     {
         yield return base.Finalize();
@@ -12,8 +15,10 @@ public class TowerController : ObjectController<TowerController, TowerModel, ITo
     {
         Debug.Log("Run Tower View");
         base.SetView(view);
-        view.Init(AddLine, UpdateLine, UpdateWidthLine);
+        view.Init(AddLine, UpdateLine, UpdateWidthLine, OnTouchReceiver);
         SetLineShoot(view.GetComponent<LineRenderer>());
+        int LevelSelect = _levelStatus.Model.Level;
+        SetLevel(LevelSelect);
     }
 
     public void SetLineShoot(LineRenderer line){
@@ -33,6 +38,17 @@ public class TowerController : ObjectController<TowerController, TowerModel, ITo
     public void UpdateWidthLine(float value){
         _model.LineShoot.startWidth = value;
         _model.LineShoot.endWidth = value;
+    }
+
+    public void OnTouchReceiver(){
+        _levelStatus.Unlock(_model.Level + 1);
+        _level.SetLevel(_model.Level + 1);
+
+        Publish<GameoverMessage>(new GameoverMessage());
+    }
+
+    public void SetLevel(int level){
+        _model.Level = level;
     }
 
 }

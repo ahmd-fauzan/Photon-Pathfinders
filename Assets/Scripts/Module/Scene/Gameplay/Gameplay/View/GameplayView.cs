@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class GameplayView : ObjectView<IGameplayModel>
 {
-    public void Init(UnityAction rotate)
+    public void Init()
     {
     }
 

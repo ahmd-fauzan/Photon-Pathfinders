@@ -6,4 +6,5 @@ public class GameView : BaseSceneView
     public GameplayView GameplayView;
     public TowerView TowerView;
     public MirrorView MirrorView;
+    public GameoverView GameOverView;
 }
